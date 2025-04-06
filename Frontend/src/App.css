@@ -30,13 +30,13 @@ body {
 .app-header {
   background-color: var(--card-bg);
   padding: 16px 24px;
-  box-shadow: var(--box-shadow);
+  /* box-shadow: var(--box-shadow); */
   border-radius: 0 0 var(--border-radius) var(--border-radius);
   display: flex;
-  justify-content: space-between;
+  justify-content: right;
   align-items: center;
   flex-wrap: wrap;
-  margin-bottom: 24px;
+  /* margin-bottom: 24px; */
 }
 
 h1 {

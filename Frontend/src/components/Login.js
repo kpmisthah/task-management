@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+
+//....................
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Login.css';
 
@@ -7,16 +9,22 @@ const API_URL = 'http://localhost:3000';
 function Login({ onLogin }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [isSignup, setIsSignup] = useState(false); // toggle between login/signup
+  const [isSignup, setIsSignup] = useState(false);
   const [error, setError] = useState('');
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    // Add animation trigger after component mounts
+    setIsLoaded(true);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const endpoint = isSignup ? 'signup' : 'login';
-
+    
     try {
       const res = await axios.post(`${API_URL}/auth/${endpoint}`, { username, password });
-      const token = isSignup ? res.data.access_token : res.data.access_token;
+      const token = res.data.access_token;
       onLogin(token);
       setError('');
     } catch (err) {
@@ -28,7 +36,23 @@ function Login({ onLogin }) {
 
   return (
     <div className="form-container">
-      <p className="title">{isSignup ? 'Create Account' : 'Welcome back'}</p>
+      <div className={`welcome-container ${isLoaded ? 'loaded' : ''}`}>
+        {!isSignup ? (
+          <div className="welcome-animation">
+            <div className="welcome-text">
+              <span className="welcome-word">Welcome</span>
+              <span className="welcome-word">Back</span>
+            </div>
+            <div className="welcome-decoration">
+              <div className="decoration-line"></div>
+              <div className="decoration-circle"></div>
+            </div>
+          </div>
+        ) : (
+          <p className="title">Create Account</p>
+        )}
+      </div>
+
       <form className="form" onSubmit={handleSubmit}>
         <input
           type="text"
@@ -53,7 +77,7 @@ function Login({ onLogin }) {
       </form>
       {error && <p className="error">{error}</p>}
       <p className="sign-up-label">
-        {isSignup ? 'Already have an account?' : 'Don’t have an account?'}{' '}
+        {isSignup ? 'Already have an account?' : "Don't have an account?"}{' '}
         <span
           className="sign-up-link"
           onClick={() => setIsSignup(!isSignup)}

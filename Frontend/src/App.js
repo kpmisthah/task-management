@@ -47,7 +47,6 @@ function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>Task Manager PRO</h1>
         {token && user && (
           <div className="user-panel">
             <div className="user-info">
