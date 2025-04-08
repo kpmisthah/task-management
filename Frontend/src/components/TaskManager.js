@@ -202,9 +202,6 @@ function TaskManager({ token, isAdmin }) {
           <button className="primary-button" onClick={() => setIsFormVisible(!isFormVisible)}>
             {isFormVisible ? '✖ Cancel' : '✚ New Task'}
           </button>
-          <button className="secondary-button glass-effect" onClick={handleExport}>
-            <i className="icon-download"></i> Export CSV
-          </button>
           {isAdmin && (
             <button className="secondary-button glass-effect" onClick={handleDownloadLogs}>
               <i className="icon-logs"></i> Download Logs
