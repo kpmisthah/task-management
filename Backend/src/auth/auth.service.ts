@@ -1,22 +1,15 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthPayloadDto } from './dto/auth.dto';
-import { Model } from 'mongoose';
-import { User } from './auth.user.schema';
-import { InjectModel } from '@nestjs/mongoose';
-import * as bcrypt from 'bcrypt'
-// import { use } from 'passport';
-// let fakeUser = [
-//     { id: 1, username: 'admin', password: 'admin', role: 'admin' },
-//     { id: 2, username: 'user', password: 'user', role: 'user' },
-// ]
+import { Authrepo } from './auth.repository';
+
 @Injectable()
 export class AuthService {
-    constructor(@InjectModel(User.name) private userModel: Model<User>,private jwtservice:JwtService){}
+    constructor(private readonly authrepo:Authrepo,private jwtservice:JwtService){}
     async validateUser({username,password}:AuthPayloadDto):Promise<string|null>{
-        let findUser = await this.userModel.findOne({username})
+        let findUser = await this.authrepo.validateUsername(username)
         if(!findUser)return null
-        const isPassword = await bcrypt.compare(password,findUser.password)
+        const isPassword = await this.authrepo.validatePassword(password,findUser.password)
         if(isPassword){
             //ivide password namml pass cheyyan padilla
             //so password destructure cheyth vaaki ullath user
@@ -28,16 +21,9 @@ export class AuthService {
     }
 
     async singup({username,password}:AuthPayloadDto):Promise<{access_token:string}>{
-        const existingUser = await this.userModel.findOne({username})
-        console.log(existingUser,'ufe');
-        
+        const existingUser = await this.authrepo.validateUsername(username)
         if(existingUser) throw new UnauthorizedException('username is already Exist')
-        const hashedPassword = await bcrypt.hash(password,10)
-        const newUser = new this.userModel({
-            username,
-            password:hashedPassword
-        })
-        const savedUser = await newUser.save()
+        const savedUser = await this.authrepo.singup({username,password})
         const{password:_password,...user} = savedUser.toObject()
         return {access_token:this.jwtservice.sign(user)}
     }
