@@ -10,11 +10,11 @@ export class Authrepo{
          }
 
        async validatePassword(input:string,stored:string){
-        return argon.verify(input,stored)
+        return argon.verify(stored,input)
        }
      
          async singup({username,password}:AuthPayloadDto):Promise<User>{
-             const hashedPassword = await argon.hash("password")
+             const hashedPassword = await argon.hash(password)
              const newUser = new this.userModel({
                  username,
                  password:hashedPassword
